@@ -1,6 +1,7 @@
 import sys
 from termcolor import colored
 import random
+from termcolor import colored
 from typing import Any, Callable,Generator, Coroutine, Union
 from functools import wraps
 import inspect
@@ -8,12 +9,14 @@ import inspect
 def typeCheck(func):
   @wraps(func)
   def helper(*args, **kwargs):
+    
     argtype = tuple(func.__annotations__.values())
     
     if len(args) + len(kwargs) -1 > len(argtype):
       raise ValueError('Too much params!')
     if len(args) > 0:
       for i, v in enumerate(args[1:]):
+        # print(i,v)
         if hasattr(argtype[i], '__origin__'):
           if argtype[i].__origin__ is Union:
             if not isinstance(v, argtype[i].__args__):
@@ -224,7 +227,7 @@ class RedBlackTree():
           s = '%s' % colored(getattr(root, val),'red',attrs=['bold'])
         else:
           s = '\u001b[30m%s' % colored(getattr(root, val),attrs=['bold'])
-          
+      # s = '%s' % getattr(root, val)
       u = len(s)-13
       first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s + y * '_' + (m - y) * ' '
       second_line = x * ' ' + '/' + (n - x - 1 + u + y) * ' ' + '\\' + (m - y - 1) * ' '
@@ -474,8 +477,6 @@ class RedBlackTree():
 
   @typeCheck
   def delete(self, value: Union[int, list]) -> None:
-    # if not (isinstance(value, int) or isinstance(value, list)):
-    #     raise TypeError('value must be integer or list!')
 
     if isinstance(value, int):
 
@@ -536,7 +537,6 @@ class RedBlackTree():
             node.right.parent = node.parent
             node.right.color = 0
           self.red -= 1
-          # self.black += 1
         else:
           if node == self.root:
             self.root = node.left
@@ -550,7 +550,6 @@ class RedBlackTree():
             node.left.parent = node.parent
             node.left.color = 0
           self.red -= 1
-          # self.black+=1
       else:
         flag = 0
         inner_flag = 1
@@ -573,6 +572,7 @@ class RedBlackTree():
       snode = pnode.left if (pnode.left != node and pnode.left != self.NULL) else pnode.right
 
       if pnode.color == 0 and snode.color == 1 and (snode.left.color + snode.right.color == 0):
+        # print('enter case 2')
         # case 2
         if node.parent.left == node:       
           self.__leftRotate(pnode)
@@ -597,6 +597,7 @@ class RedBlackTree():
             self.black-=1
 
       elif pnode.color == 0 and snode.color == 0 and (snode.left.color + snode.right.color == 0):
+        # print('enter case 3')
         # case 3
         if inner_flag:
           if node.parent.left == node:
@@ -616,6 +617,7 @@ class RedBlackTree():
         self.red+=1
 
       elif pnode.color == 1 and snode.color == 0 and (snode.left.color + snode.right.color) == 0:
+        # print('enter case 4')
         flag = 1
         # case 4, terminated case.
 
@@ -623,6 +625,7 @@ class RedBlackTree():
         snode.color = 1
 
       elif __case5(node, pnode, snode):
+        # print('enter case 5')
         # case 5
         if node.parent.left == node:
           self.__rightRotate(snode)
@@ -634,6 +637,7 @@ class RedBlackTree():
         self.__deleteModify(node, flag, inner_flag)
 
       elif snode.color == 0 and (snode.left.color == 1 or snode.right.color == 1):
+        # print('enter case 6')
         # case 6, terminated case.
         flag = 1
         # if pnode.left == node:
